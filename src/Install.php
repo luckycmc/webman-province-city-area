@@ -9,7 +9,8 @@ class Install
      * @var array
      */
     protected static $pathRelation = array (
-  'config/plugin/luckycmc/webman-province-city-area' => 'config/plugin/luckycmc/webman-province-city-area',
+        'config/plugin/luckycmc/webman-province-city-area' => 'config/plugin/luckycmc/webman-province-city-area',
+        'database' => 'database'
 );
 
     /**
