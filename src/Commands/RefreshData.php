@@ -99,7 +99,7 @@ class RefreshData extends Command
                         'type'      => 'province',
                         'city_list' => [],
                     ];
-                    $cityList = $this->getCity($id);
+                    $cityList = $this->getCity($id, $output);
                     $_cityList = [];
                     if ($cityList !== false) {
                         foreach ($cityList as $city) {
@@ -111,7 +111,7 @@ class RefreshData extends Command
                                 'type'      => 'city',
                                 'area_list' => [],
                             ];
-                            $areaList = $this->getArea($city['id']);
+                            $areaList = $this->getArea($city['id'], $output);
                             $_areaList = [];
                             if ($areaList !== false) {
                                 foreach ($areaList as $area) {
@@ -123,7 +123,7 @@ class RefreshData extends Command
                                         'parent_id'   => $city['id'],
                                         'street_list' => [],
                                     ];
-                                    $streetList = $this->getStreet($area['id']);
+                                    $streetList = $this->getStreet($area['id'], $output);
                                     if ($streetList !== false) {
                                         foreach ($streetList as &$street) {
                                             $street['type'] = 'street';
@@ -152,7 +152,7 @@ class RefreshData extends Command
             }
         }
 
-        $this->insertToDb();
+        $this->insertToDb($output);
         return self::SUCCESS;
     }
 
@@ -233,19 +233,19 @@ class RefreshData extends Command
         DB::commit();
     }
 
-    public function getCity($id)
+    public function getCity($id, OutputInterface $output)
     {
-        return $this->parseData($id);
+        return $this->parseData($id, $output);
     }
 
-    public function getArea($id)
+    public function getArea($id, OutputInterface $output)
     {
-        return $this->parseData($id);
+        return $this->parseData($id, $output);
     }
 
-    public function getStreet($id)
+    public function getStreet($id, OutputInterface $output)
     {
-        return $this->parseData($id);
+        return $this->parseData($id, $output);
     }
 
     public function parseData($id,OutputInterface $output)
