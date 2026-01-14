@@ -16,6 +16,10 @@ php webman migrate
 ```
 php webman pca:refreshData file|jd
 ```
+### 清空数据
+```
+php webman pca:clearData
+```
 
 ## Demo
 ```php
