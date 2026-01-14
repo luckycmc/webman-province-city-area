@@ -1,7 +1,7 @@
 <?php
 
-use Luckycmc\WebmanProvinceCityArea\Facades\Accessor\Commands\ClearData;
-use Luckycmc\WebmanProvinceCityArea\Facades\Accessor\Commands\RefreshData;
+use Luckycmc\WebmanProvinceCityArea\Commands\ClearData;
+use Luckycmc\WebmanProvinceCityArea\Commands\RefreshData;
 
 return [
     ClearData::class,

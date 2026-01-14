@@ -1,6 +1,6 @@
 <?php
 
-namespace Luckycmc\WebmanProvinceCityArea\Facades\Accessor\Commands;
+namespace Luckycmc\WebmanProvinceCityArea\Commands;
 
 use Luckycmc\WebmanProvinceCityArea\Models\ProvinceCityArea as PCAModel;
 use GuzzleHttp\Client;

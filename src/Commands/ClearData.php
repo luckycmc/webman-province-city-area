@@ -1,6 +1,6 @@
 <?php
 
-namespace Luckycmc\WebmanProvinceCityArea\Facades\Accessor\Commands;
+namespace Luckycmc\WebmanProvinceCityArea\Commands;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
