@@ -7,17 +7,10 @@
     "php": "^7.0 || ^8.0",
     "guzzlehttp/guzzle": "~7.0",
     "guzzlehttp/psr7": "~2.0",
-    "x2nx/webman-migrate": "^0.0.8"
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "Luckycmc\\WebmanProvinceCityArea\\ProvinceCityAreaServiceProvider"
-      ],
-      "alias": {
-        "ProvinceCityArea": "Luckycmc\\WebmanProvinceCityArea\\Facades\\ProvinceCityAreaFacades"
-      }
-    }
+    "x2nx/webman-migrate": "^0.0.8",
+    "illuminate/container": "^12.47",
+    "webman/cache": "^2.1",
+    "webman/redis": "^2.1"
   },
   "autoload": {
     "psr-4": {

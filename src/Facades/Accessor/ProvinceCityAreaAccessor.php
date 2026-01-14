@@ -1,16 +1,16 @@
 <?php
 
-namespace Kevin\ProvinceCityArea;
+namespace Luckycmc\WebmanProvinceCityArea\Facades\Accessor;
 
 use Luckycmc\WebmanProvinceCityArea\Models\ProvinceCityArea as PCA;
-use Illuminate\Support\Facades\Cache;
+use support\Cache;
 
-class ProvinceCityArea
+class ProvinceCityAreaAccessor
 {
     /**
      * @return false|string
      */
-    public static function test()
+    public function test()
     {
         return date('Y-m-d H:i:s');
     }
@@ -18,7 +18,7 @@ class ProvinceCityArea
     /**
      * @return mixed
      */
-    public static function getProvinceList()
+    public function getProvinceList()
     {
         return self::getListByParentId(0);
     }
@@ -28,7 +28,7 @@ class ProvinceCityArea
      *
      * @return mixed
      */
-    public static function getCityList($provinceId)
+    public function getCityList($provinceId)
     {
         return self::getListByParentId($provinceId);
     }
@@ -38,7 +38,7 @@ class ProvinceCityArea
      *
      * @return mixed
      */
-    public static function getAreaList($cityId)
+    public function getAreaList($cityId)
     {
         return self::getListByParentId($cityId);
     }
@@ -48,7 +48,7 @@ class ProvinceCityArea
      *
      * @return mixed
      */
-    public static function getProvince($provinceId)
+    public function getProvince($provinceId)
     {
         return self::getItem($provinceId);
     }
@@ -58,7 +58,7 @@ class ProvinceCityArea
      *
      * @return mixed
      */
-    public static function getCity($cityId)
+    public function getCity($cityId)
     {
         return self::getItem($cityId);
     }
@@ -68,7 +68,7 @@ class ProvinceCityArea
      *
      * @return mixed
      */
-    public static function getArea($areaId)
+    public function getArea($areaId)
     {
         return self::getItem($areaId);
     }
@@ -76,7 +76,7 @@ class ProvinceCityArea
     /**
      * @return mixed
      */
-    public static function getAllProvince()
+    public function getAllProvince()
     {
         return self::getListByType();
     }
@@ -84,7 +84,7 @@ class ProvinceCityArea
     /**
      * @return mixed
      */
-    public static function getAllCity()
+    public function getAllCity()
     {
         return self::getListByType('city');
     }
@@ -92,7 +92,7 @@ class ProvinceCityArea
     /**
      * @return mixed
      */
-    public static function getAllArea()
+    public function getAllArea()
     {
         return self::getListByType('area');
     }
@@ -100,7 +100,7 @@ class ProvinceCityArea
     /**
      * @return mixed
      */
-    public static function getAllStreet()
+    public function getAllStreet()
     {
         return self::getListByType('street');
     }
@@ -110,25 +110,25 @@ class ProvinceCityArea
      *
      * @return mixed
      */
-    protected static function getListByParentId($parentId)
+    protected function getListByParentId($parentId)
     {
         $cache_key = 'pca_list_' . $parentId;
         $result    = Cache::get($cache_key);
         if( empty($result) ){
             $result = PCA::where('parent_id', $parentId)->get();
-            Cache::put($cache_key, $result);
+            Cache::set($cache_key, $result);
         }
 
         return $result;
     }
 
-    protected static function getAreaByProvinceId($provinceId)
+    protected function getAreaByProvinceId($provinceId)
     {
         $cache_key = 'pca_area_province' . $provinceId;
         $result    = Cache::get($cache_key);
         if( empty($result) ){
             $result = PCA::whereIn('parent_id', PCA::where('parent_id', $provinceId)->pluck('id'))->get();
-            Cache::put($cache_key, $result);
+            Cache::set($cache_key, $result);
         }
 
         return $result;
@@ -140,7 +140,7 @@ class ProvinceCityArea
      *
      * @return mixed
      */
-    protected static function getItem($id)
+    protected function getItem($id)
     {
         return PCA::where('id', $id)->first();
     }
@@ -150,13 +150,13 @@ class ProvinceCityArea
      *
      * @return mixed
      */
-    protected static function getListByType($type = 'province')
+    protected function getListByType($type = 'province')
     {
         $cache_key = 'pca_list_' . $type;
-        $result    = Cache::get($cache_key);
+        $result= Cache::get($cache_key);
         if( empty($result) ){
             $result = PCA::where('type', $type)->get();
-            Cache::put($cache_key, $result);
+            Cache::set($cache_key, $result);
         }
 
         return $result;
@@ -170,7 +170,7 @@ class ProvinceCityArea
      *
      * @return string
      */
-    public static function getName($provinceId, $cityId, $areaId, $streetId)
+    public function getName($provinceId, $cityId, $areaId, $streetId)
     {
         $text = [];
         if( !empty($provinceId) ){
@@ -205,7 +205,7 @@ class ProvinceCityArea
      *
      * @return array
      */
-    public static function parseAddress($data)
+    public function parseAddress($data)
     {
 
         //省市区县
@@ -304,16 +304,6 @@ class ProvinceCityArea
 
         }
         foreach ($areaList as $key => $area) {
-            // 去掉最后一位区或者县字
-//            $temp = str_replace(['区', '县'], '', $area->name);
-//            dump($temp);
-//            if( strpos($data, $temp) !== false ){
-//                $result['area']    = $area->name;
-//                $result['area_id'] = $area->id;
-//                $result['city_id'] = intval($area->parent_id);
-//                $data              = trim(str_replace([$area->name, $temp], '', $data));
-//                break;
-//            }
             $match = false;
             $temp  = $area->name;
             if( strpos($data, $temp) !== false ){
