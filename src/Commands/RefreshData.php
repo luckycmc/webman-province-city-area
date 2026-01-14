@@ -4,7 +4,7 @@ namespace Luckycmc\WebmanProvinceCityArea\Commands;
 
 use Luckycmc\WebmanProvinceCityArea\Models\ProvinceCityArea as PCAModel;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\DB;
+use support\Db;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,8 +12,8 @@ use Symfony\Component\Console\Input\InputInterface;
 
 class RefreshData extends Command
 {
-    protected static $defaultName = 'pca:refreshData {--d|driver=file}';
-    protected static $defaultDescription = '从京东获取最新的省市县数据,--d:jd|file jd-从京东获取最新数据，file-从本地文件获取';
+    protected static $defaultName = 'pca:refreshData';
+    protected static $defaultDescription = '从京东获取最新的省市县数据,jd|file jd-从京东获取最新数据，file-从本地文件获取';
     public $client = null;
     public $provinceList = null;
     public $url = '';
@@ -33,15 +33,15 @@ class RefreshData extends Command
      */
     protected function configure()
     {
-        $this->addArgument('file', InputArgument::OPTIONAL, '加载途径');
+        $this->addArgument('type', InputArgument::REQUIRED, '加载途径');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $file = $input->getArgument('file');
-        if ($file) {
+        $type = $input->getArgument('type');
+        if ($type == 'file') {
             $output->writeln('您选择从本地文件中载入省市县数据');
-            $output->writeln('如果您要强制从京东获取，请执行php artisan pca:refreshData -d jd');
+            $output->writeln('如果您要强制从京东获取，请执行php webman pca:refreshData jd');
             //从本地文件中获取省市县数据
             $data = file_get_contents(__DIR__.'/../resource/province-city-area.json');
             $data = json_decode($data, true);
@@ -158,17 +158,18 @@ class RefreshData extends Command
 
     public function insertToDb(OutputInterface $output)
     {
-        DB::beginTransaction();
+        $output->writeln('开始插入数据');
+        Db::beginTransaction();
         $countResult = [
             'province' => 0,
             'city'     => 0,
             'area'     => 0,
             'street'   => 0,
         ];
+        $output->writeln('事务开始');
 
         try {
             $output->writeln('正在插入数据库');
-            $bar = $output->createProgressBar($this->count);
             foreach ($this->result as $province) {
                 $provinceList[] = [
                     'id'        => $province['id'],
@@ -203,34 +204,29 @@ class RefreshData extends Command
                                 'type'      => 'street',
                             ];
                         }
-                        DB::table('province_city_area')->insert($streetList);
-                        $bar->advance(count($streetList));
+                        Db::table('province_city_area')->insert($streetList);
                         $countResult['street'] += count($streetList);
                     }
-                    DB::table('province_city_area')->insert($areaList);
-                    $bar->advance(count($areaList));
+                    Db::table('province_city_area')->insert($areaList);
                     $countResult['area'] += count($areaList);
                 }
 
-                DB::table('province_city_area')->insert($cityList);
-                $bar->advance(count($cityList));
+                Db::table('province_city_area')->insert($cityList);
                 $countResult['city'] += count($cityList);
             }
             $countResult['province'] += count($provinceList);
-            DB::table('province_city_area')->insert($provinceList);
-            $bar->advance(count($provinceList));
-            $bar->finish();
+            Db::table('province_city_area')->insert($provinceList);
             $output->writeln('');
             $output->writeln('数据已更新完成');
             $output->writeln('共插入:'.$this->count.'条数据，其中省级行政区:'.$countResult['province'].',城市:'.$countResult['city'].',区县:'.$countResult['area'].',乡镇街道:'.$countResult['street']);
         } catch (\Exception $e) {
-            DB::rollBack();
+            Db::rollBack();
             $output->writeln('更新省市县数据失败.');
             $output->writeln($e->getMessage());
             $output->writeln($e->getLine());
         }
 
-        DB::commit();
+        Db::commit();
     }
 
     public function getCity($id, OutputInterface $output)
