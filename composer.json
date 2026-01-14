@@ -6,7 +6,8 @@
   "require": {
     "php": "^7.0 || ^8.0",
     "guzzlehttp/guzzle": "~7.0",
-    "guzzlehttp/psr7": "~2.0"
+    "guzzlehttp/psr7": "~2.0",
+    "x2nx/webman-migrate": "^0.0.8"
   },
   "extra": {
     "laravel": {
